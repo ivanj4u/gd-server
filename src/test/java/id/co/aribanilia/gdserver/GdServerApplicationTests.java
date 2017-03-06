@@ -30,13 +30,13 @@ public class GdServerApplicationTests {
 	@Test
 	public void addClient() {
 		Client client = new Client(
-				GDConstants.CLIENT.ADMIN,
+				GDConstants.CLIENT.ADMIN.getUsername(),
 				"Administrator",
 				"admin123",
 				3600);
 		clientDao.save(client);
 		client = new Client(
-				GDConstants.CLIENT.USER,
+				GDConstants.CLIENT.USER.getUsername(),
 				"User",
 				"user123",
 				180);

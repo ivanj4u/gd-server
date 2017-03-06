@@ -1,6 +1,7 @@
 package id.co.aribanilia.gdserver.security;
 
 import id.co.aribanilia.gdserver.service.SecureUserDetailService;
+import id.co.aribanilia.gdserver.util.GDConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,10 +44,22 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authProvider());
     }
 
+
+    @Autowired
+    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser(GDConstants.CLIENT.ADMIN.getUsername()).password(GDConstants.CLIENT.ADMIN.getPassword()).roles(GDConstants.CLIENT.ADMIN.getRole())
+                .and()
+                .withUser(GDConstants.CLIENT.USER.getUsername()).password(GDConstants.CLIENT.USER.getPassword()).roles(GDConstants.CLIENT.USER.getRole());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/public.html").permitAll()
-                .and().authorizeRequests().anyRequest().authenticated();
+        http
+                .authorizeRequests().antMatchers("/public.html").permitAll()
+                .and().authorizeRequests().anyRequest().authenticated()
+                .and().httpBasic()
+                .and().csrf().disable();
     }
 
     @Override

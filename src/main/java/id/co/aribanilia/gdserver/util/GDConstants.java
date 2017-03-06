@@ -5,9 +5,31 @@ package id.co.aribanilia.gdserver.util;
  */
 public class GDConstants {
 
-    public interface CLIENT {
-        String ADMIN = "admin";
-        String USER = "user";
+    public enum CLIENT {
+        ADMIN("admin", "Admin","admin123"),
+        USER("user", "User","user123");
+
+        private String username;
+        private String role;
+        private String password;
+
+        CLIENT(String clientId, String role, String password) {
+            this.username = clientId;
+            this.role = role;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public String getPassword() {
+            return password;
+        }
     }
 
     public interface AUTHORITIES {

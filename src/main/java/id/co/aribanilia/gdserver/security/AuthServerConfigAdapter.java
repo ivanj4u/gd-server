@@ -42,10 +42,10 @@ public class AuthServerConfigAdapter extends AuthorizationServerConfigurerAdapte
         /**
          * Client Admin
          */
-        Client admin = clientDao.findByClientId(GDConstants.CLIENT.ADMIN);
+        Client admin = clientDao.findByClientId(GDConstants.CLIENT.ADMIN.getUsername());
         if (admin == null)
             throw new Exception("Client not Found");
-        Client user = clientDao.findByClientId(GDConstants.CLIENT.USER);
+        Client user = clientDao.findByClientId(GDConstants.CLIENT.USER.getUsername());
         if (user == null)
             throw new Exception("Client not Found");
         clients.inMemory()
@@ -55,6 +55,7 @@ public class AuthServerConfigAdapter extends AuthorizationServerConfigurerAdapte
                 .authorizedGrantTypes("authorization_code", "refresh_token")
                 .scopes(GDConstants.SCOPE.MODULE_GADAI, GDConstants.SCOPE.MODULE_HARGA)
                 .accessTokenValiditySeconds(admin.getTokenValidity())
+                .autoApprove(true)
                 .and()
                 .withClient(user.getClientId())
                 .authorities(GDConstants.AUTHORITIES.APPLICATION_WEB)
