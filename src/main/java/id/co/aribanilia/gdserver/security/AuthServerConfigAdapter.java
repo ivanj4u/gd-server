@@ -1,5 +1,8 @@
 package id.co.aribanilia.gdserver.security;
 
+import id.co.aribanilia.gdserver.dao.ClientDao;
+import id.co.aribanilia.gdserver.entity.Client;
+import id.co.aribanilia.gdserver.util.GDConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -31,21 +34,40 @@ public class AuthServerConfigAdapter extends AuthorizationServerConfigurerAdapte
     @Qualifier("userDetailsServiceBean")
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private ClientDao clientDao;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        /**
+         * Client Admin
+         */
+        Client admin = clientDao.findByClientId(GDConstants.CLIENT.ADMIN);
+        if (admin == null)
+            throw new Exception("Client not Found");
+        Client user = clientDao.findByClientId(GDConstants.CLIENT.USER);
+        if (user == null)
+            throw new Exception("Client not Found");
         clients.inMemory()
-                .withClient("gadai")
-                .authorities("APLIKASI_CLIENT_OAUTH2")
-                .secret("gadai123")
+                .withClient(admin.getClientId())
+                .authorities(GDConstants.AUTHORITIES.APPLICATION_WEB)
+                .secret(admin.getPassword())
                 .authorizedGrantTypes("authorization_code", "refresh_token")
-                .scopes("modul-gadai", "modul-harga")
-                .accessTokenValiditySeconds(180)
+                .scopes(GDConstants.SCOPE.MODULE_GADAI, GDConstants.SCOPE.MODULE_HARGA)
+                .accessTokenValiditySeconds(admin.getTokenValidity())
+                .and()
+                .withClient(user.getClientId())
+                .authorities(GDConstants.AUTHORITIES.APPLICATION_WEB)
+                .secret(user.getPassword())
+                .authorizedGrantTypes("password")
+                .scopes(GDConstants.SCOPE.MODULE_GADAI, GDConstants.SCOPE.MODULE_HARGA)
+                .accessTokenValiditySeconds(user.getTokenValidity())
                 .autoApprove(true);
     }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.checkTokenAccess("hasAuthority('APLIKASI_CLIENT_OAUTH2')")
+        security.checkTokenAccess(GDConstants.AUTHORITIES.HAS_AUTHORITY_WEB)
                 .tokenKeyAccess("permitAll()");
     }
 

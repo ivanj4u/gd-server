@@ -24,6 +24,24 @@ public class GdServerApplicationTests {
 	private RoleDao roleDao;
 	@Autowired
 	private PermissionDao permissionDao;
+	@Autowired
+	private ClientDao clientDao;
+
+	@Test
+	public void addClient() {
+		Client client = new Client(
+				GDConstants.CLIENT.ADMIN,
+				"Administrator",
+				"admin123",
+				3600);
+		clientDao.save(client);
+		client = new Client(
+				GDConstants.CLIENT.USER,
+				"User",
+				"user123",
+				180);
+		clientDao.save(client);
+	}
 
 	@Test
 	public void addUser() {
@@ -31,14 +49,14 @@ public class GdServerApplicationTests {
 		String password = "123";
 		String passwordDecrypt = encoder.encode(password);
 		User user = new User();
-		user.setUsername("syaiful");
-		user.setFullname("Syaiful Anam");
+		user.setUsername("cihuy");
+		user.setFullname("Lailatul Fitriana");
 		user.setPassword(passwordDecrypt);
-		user.setEmail("syaiful.anam@pegadaian.co.id");
-		user.setNoHandphone("08501234567");
+		user.setEmail("lyla.cihuy@gmail.com");
+		user.setNoHandphone("08123456789");
 		userDao.save(user);
 
-		UserRole userRole = new UserRole("syaiful", "R00001");
+		UserRole userRole = new UserRole("cihuy", "R00001");
 		userRoleDao.save(userRole);
 	}
 
